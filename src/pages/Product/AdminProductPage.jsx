@@ -161,7 +161,17 @@ const AdminProductPage = () => {
                   <tr>
                     <th>ID</th>
                     <th>Name</th>
-                    <th>PIC</th>
+                    <th>Maincategory</th>
+                    <th>Subcategory</th>
+                    <th>Brand</th>
+                    <th>Color</th>
+                    <th>Size</th>
+                    <th>Base Price</th>
+                    <th>Discount</th>
+                    <th>Final Price</th>
+                    <th>Stock</th>
+                    <th>Stock Quantity</th>
+                    <th>Pic</th>
                     <th>Status</th>
                     <th></th>
                     <th></th>
@@ -173,12 +183,48 @@ const AdminProductPage = () => {
                     return <tr key={index}>
                       <td>{item.id}</td>
                       <td>{item.name}</td>
-                      {/* <td>{item.pic}</td> ab yaha real pic ko display krna hai isi jagha */}
+                      <td>{item.maincategory.name ?? item.maincategory}</td>
+                      <td>{item.subcategory.name ?? item.subcategory}</td>
+                      <td>{item.brand.name ?? item.brand}</td>
                       <td>
+                        <div style={{ width: 120 }}>
+                          {item.color?.join(", ")}
+
+                        </div>
+                      </td>
+
+                      <td>
+                        <div style={{ width: 120 }}>
+                          {item.size?.join(", ")}
+
+                        </div>
+                      </td>
+                      <td>&#8377;{item.basePrice}</td>
+                      <td>{item.discount}% OFF</td>
+                      <td>&#8377;{item.finalPrice}</td>
+                      <td>{item.stock ? "In stock" : "Out of stock"}</td>
+                      <td>{item.stockQuantity}</td>
+                      <td>
+                        <div style={{ width: 430 }}>
+                          {
+                            item.pic?.map((pic, index) => {
+                              return <a key={index} href={`${import.meta.env.VITE_APP_IMAGE_SERVER}${pic}`} target='_blank'>
+                                <img src={`${import.meta.env.VITE_APP_IMAGE_SERVER}${pic}`} height={70} width={80} className='m-1' alt="Category Image" />
+                              </a>
+
+                            })
+                          }
+
+
+                        </div>
+                      </td>
+
+                      {/* <td>{item.pic}</td> ab yaha real pic ko display krna hai isi jagha */}
+                      {/* <td>
                         <a href={`${import.meta.env.VITE_APP_IMAGE_SERVER}${item.pic}`} target='_blank'>
                           <img src={`${import.meta.env.VITE_APP_IMAGE_SERVER}${item.pic}`} height={70} width={80} alt="Category Image" />
                         </a>
-                      </td>
+                      </td> */}
                       <td>{item.status ? "Active" : "Inactive"}</td>
                       <td>
                         <Link to={`/admin/product/update/${item.id}`} className='btn btn-primary'>

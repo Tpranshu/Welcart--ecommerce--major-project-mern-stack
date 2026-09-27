@@ -1,5 +1,8 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Link, NavLink } from 'react-router-dom'
+
+import { useDispatch, useSelector } from 'react-redux'
+import { getSetting } from "../redux/ActionCreators/SettingActionCreators"
 
 const Navbar = () => {
     let [settingData, setSettingData] = useState({
@@ -18,6 +21,53 @@ const Navbar = () => {
         map2: import.meta.env.VITE_APP_MAP2,
 
     })
+    let SettingStateData = useSelector(state => state.SettingStateData)
+    let dispatch = useDispatch()
+
+    // useEffect(() => {
+    //     (() => {
+    //         dispatch(getSetting())
+    //         if (SettingStateData.length) {
+
+    //             let item = {}
+    //             Object.keys(settingData).forEach(key => item[key] = SettingStateData[0][key] || settingData[key])
+    //             setSettingData({ ...item })
+
+    //         }
+    //     })()
+
+    // }, [SettingStateData.length])
+    
+
+
+    useEffect(() => {
+
+        (() => {
+
+            dispatch(getSetting())
+
+            if (SettingStateData.length) {
+
+                let item = {}
+
+                Object.keys(settingData).forEach(key => {
+                    item[key] = SettingStateData[0][key] || settingData[key]
+                })
+
+                item.siteName = SettingStateData[0].siteName?.trim()
+                    ? SettingStateData[0].siteName
+                    : import.meta.env.VITE_APP_SITE_NAME
+
+                setSettingData({ ...item })
+
+            }
+
+        })()
+
+    }, [SettingStateData.length])
+
+
+
     return (
         <>
             {/* <h4>this is navbar component</h4> */}

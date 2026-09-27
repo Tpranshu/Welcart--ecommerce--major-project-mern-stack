@@ -116,7 +116,7 @@ const AdminProductCreatePage = () => {
         // let value = name==="pic" ? e.target.files[0] : e.target.value  // real backend me ye line ka code use hoga
         let value = name === "pic" ? Array.from(e.target.files).map(file => "brand/" + file.name) : e.target.value
 
-        setData({ ...data, [name]: name === 'status' || name==="stock" ? (value === "1" ? true : false) : value })
+        setData({ ...data, [name]: name === 'status' || name === "stock" ? (value === "1" ? true : false) : value })
         setErrorMessage({ ...errorMessage, [name]: name === "pic" ? ImageValidator(e) : TextValidators(e) })
 
 
@@ -138,7 +138,7 @@ const AdminProductCreatePage = () => {
             setShow(true)
         }
         else {
-             let bp = parseInt(data.basePrice)
+            let bp = parseInt(data.basePrice)
             let d = parseInt(data.discount)
             let sc = parseInt(data.stockQuantity)
 
@@ -146,7 +146,7 @@ const AdminProductCreatePage = () => {
 
             let items = {
                 ...data,
-                 maincategory: data.maincategory || MaincategoryStateData[0].name,
+                maincategory: data.maincategory || MaincategoryStateData[0].name,
                 subcategory: data.subcategory || SubcategoryStateData[0].name,
                 brand: data.brand || BrandStateData[0].name,
                 basePrice: bp,
@@ -170,19 +170,35 @@ const AdminProductCreatePage = () => {
             //     return
             // }
 
+            dispatch(createProduct({ ...items }))
 
-            dispatch(createProduct({ ...data }))
 
             // form data bheje jab backend se data me file imege ka concept hoga uske liye yaha code hai --
 
             // let formData = new formData()
-
             // formData.append("name", data.name)
+            // formData.append("maincategory", data.maincategory || MaincategoryStateData[0].id)
+            // formData.append("subcategory", data.subcategory || SubcategoryStateData[0].id)
+            // formData.append("brand", data.brand || BrandStateData[0].id)
+            // formData.append("finalPrice", fp)
+            // formData.append("stock", data.stock)
+            // formData.append("stockQuantity", sc)
+            // formData.append("description", description)
+
+            
+            // data.color?.forEach(item => {
+            //     FormData.append("color", item)
+            // })
+
+            // data.size?.forEach(item => {
+            //     FormData.append("size", item)
+            // })
+
+            // FormData.append('status', data.status)
+
 
             // formData.append("icon", data.icon)
-
             // formData.append("status", data.status)
-
             // dispatch(createProduct(formData))
 
 
@@ -425,7 +441,9 @@ const AdminProductCreatePage = () => {
                                     <label >Pic*</label>
                                     <input type="file" name='pic' multiple onChange={getInputData} className={`form-control ${show && errorMessage.pic ? `border-danger` : `border-primary`}`} />
 
-                                    {show && errorMessage.pic ? <p className='text-danger text-capitalize'>{errorMessage.pic}</p> : null}
+                                    {show && errorMessage.pic ? errorMessage.pic?.split("|").map((error, index)=>{
+                                        return <p className='text-danger text-capitalize' key={index} >{error}</p>
+                                    }) : null}
 
 
                                 </div>

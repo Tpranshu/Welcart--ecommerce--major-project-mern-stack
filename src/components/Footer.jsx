@@ -1,6 +1,11 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import Newsletter from './Newsletter'
 import { Link } from 'react-router-dom'
+
+
+import { useDispatch, useSelector } from 'react-redux'
+import { getSetting  } from "../redux/ActionCreators/SettingActionCreators"
+
 
 const Footer = () => {
 
@@ -20,6 +25,23 @@ const Footer = () => {
         map2: import.meta.env.VITE_APP_MAP2,
 
     })
+     let SettingStateData = useSelector(state => state.SettingStateData)
+        let dispatch = useDispatch()
+    
+        useEffect(() => {
+            (() => {
+                dispatch(getSetting())
+                if (SettingStateData.length) {
+    
+                    let item = {}
+                    Object.keys(settingData).forEach(key => item[key] = SettingStateData[0][key] || settingData[key])
+                    setSettingData({ ...item })
+    
+                }
+            })()
+    
+        }, [SettingStateData.length])
+    
 
     return (
         <>

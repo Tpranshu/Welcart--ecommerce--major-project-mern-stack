@@ -1,127 +1,249 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import AdminSideBar from '../../components/Admin/AdminSideBar'
-import Profile from '../../components/User/Profile'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import TextValidators from '../../Validators/TextValidators'
+import ImageValidator from "../../Validators/ImageValidator"
+import { useDispatch, useSelector } from 'react-redux'
+import { getProduct, updateProduct } from "../../redux/ActionCreators/ProductActionCreators"
 
-import { getProduct, updateProduct, deleteProduct } from "../../redux/ActionCreators/ProductActionCreators"
-import { useSelector, useDispatch } from 'react-redux'
+import RichTextEditor from "../../rte/RichTextEditor"
+import { createStructuredContent } from "../../rte/richTextEditorBridge"
 
-const AdminProductUpdatePage = () => {
+
+
+import { createMaincategory, getMaincategory } from "../../redux/ActionCreators/MaincategoryActionCreators"
+import { createSubcategory, getSubcategory } from "../../redux/ActionCreators/SubcategoryActionCreators"
+import { createBrand, getBrand } from "../../redux/ActionCreators/BrandActionCreators"
+
+
+
+const colors = ["Black", "White", "Blue", "Red", "Orange", "Gray", "Green", "Pink", "Yellow", "Purple", "Magenta", "N/A"]
+const sizes = ["XXXL", "XXL", "XL", "L", "M", "S", "XS", "NB", "26", "28", "30", "32", "34", "36", "38", "40", "42", "N/A"]
+
+const AdminProductCreatePage = () => {
+    let editorRef = useRef(null)
+    let [description, setDescription] = useState("")
+
+
+
+    // ab yaha create Product ke liye form bnaege to form bnane ke liye kuch variable(state) define krege
 
     let { id } = useParams()
 
     let [data, setData] = useState({
         name: "",
-        icon: "",
-        shortDescription: "",
+        maincategory: "",
+        subcategory: "",
+        brand: "",
+        color: [],
+        size: [],
+        basePrice: '',
+        finalPrice: '',
+        discount: '',
+        stock: true,
+        stockQuantity: '',
+        pic: [],
         status: true,
+
     })
 
     let [errorMessage, setErrorMessage] = useState({
-        name: "name field is mendatory",
-        icon: "icon field is mendatory",
-        shortDescription: "shortDescription field is mendatory",
+        name: "",
+        color: "",
+        size: "",
+        basePrice: "",
+        discount: "",
+        stockQuantity: "",
+        pic: "",
     })
+    let [oldPics, setOldPics] = useState([])
 
 
     let [show, setShow] = useState(false)
-    let navigate = useNavigate()
-
 
     // ab ham yaha same data repeat na ho Product ke form me to uska yaha logic bnaege and uske liye sabse phele state variable define krege
     // let [ProductStateData, setProductStateData] = useState([])
+
     let ProductStateData = useSelector(state => state.ProductStateData)
+    let MaincategoryStateData = useSelector(state => state.MaincategoryStateData)
+    let SubcategoryStateData = useSelector(state => state.SubcategoryStateData)
+    let BrandStateData = useSelector(state => state.BrandStateData)
+
     let dispatch = useDispatch()
+    function getInputCheckbox(key, value) {
+        let arr = data[key]
+        if (arr.includes(value)) {
+            arr = arr.filter(x => x !== value)
+        }
+        else {
+            arr.push(value)
+        }
+        setData({ ...data, [key]: arr })
+        setErrorMessage({ ...errorMessage, [key]: arr.length === 0 ? `Please select at least one ${key}` : "" })
+
+    }
+
+
+    useEffect(() => {
+
+        (() => {
+            dispatch(getMaincategory())
+
+        })()
+
+    }, [MaincategoryStateData.length])
+
+
+    useEffect(() => {
+
+        (() => {
+            dispatch(getSubcategory())
+
+        })()
+
+    }, [SubcategoryStateData.length])
+
+    useEffect(() => {
+
+        (() => {
+            dispatch(getBrand())
+
+        })()
+
+    }, [BrandStateData.length])
+
 
     useEffect(() => {
         (() => {
-            // let response = await fetch(`${import.meta.env.VITE_APP_BACKEND_SERVER}/Product`, {
-            //     method: "GET",
-            //     headers: {
-            //         "content-type": "application/json"
-            //     }
-            // })
-
-            // response = await response.json()
-
             dispatch(getProduct())
-
             if (ProductStateData.length) {
-
                 let item = ProductStateData.find(x => x.id === id)
                 if (item) {
-                    setData({ ...data, ...item })
-                    // setProductStateData(response)
+                    setOldPics([...item.pic])
+                    setData({ ...data, ...item, pic: [] })
+                    setTimeout(() => {
+                        syncDocument(createStructuredContent(""), item?.description ?? "");
+
+                    }, 500);
+
                 } else {
                     navigate("/admin/product")
                 }
-            }
 
+            }
         })()
 
     }, [ProductStateData.length])
 
 
-    // npm i -g json-server  --> ye locally fake backend server use ke liye package hai
-    // json-server data.json  --port 8000 --> command line
-    // frontend --> port 4000
-    // backend --> port 8000
-
-    // npm i datatables.net-dt
-
-
+    let navigate = useNavigate()
 
 
     function getInputData(e) {
+        let name = e.target.name
+        // let value = name==="pic" ? e.target.files[0] : e.target.value  // real backend me ye line ka code use hoga
+        let value = name === "pic" ? Array.from(e.target.files).map(file => "brand/" + file.name) : e.target.value
 
-        let { name, value } = e.target
-        // let name = e.target.name
-        // let value = name==="icon" ? e.target.files[0] : e.target.value  // real backend me ye line ka code use hoga
-        // let value = name === "icon" ? "Product/" + e.target.files[0].name : e.target.value
-
-        setData({ ...data, [name]: name === 'status' ? (value === "1" ? true : false) : value })
-        // setErrorMessage({ ...errorMessage, [name]: name === "icon" ? ImageValidator(e) : TextValidators(e) })
-        setErrorMessage({ ...errorMessage, [name]: TextValidators(e) })
+        setData({ ...data, [name]: name === 'status' || name === "stock" ? (value === "1" ? true : false) : value })
+        setErrorMessage({ ...errorMessage, [name]: name === "pic" ? ImageValidator(e) : TextValidators(e) })
 
 
+    }
+    function syncDocument(documentModel, nextHtml) {
+        const resolvedHtml = nextHtml !== undefined ? nextHtml : renderHTML(documentModel);
+        setDescription(resolvedHtml)
     }
 
 
     async function postData(e) {
+
         e.preventDefault()
+
         let error = Object.values(errorMessage).find(x => x !== "")
+
         if (error) {
+
             setShow(true)
         }
         else {
+            let bp = parseInt(data.basePrice)
+            let d = parseInt(data.discount)
+            let sc = parseInt(data.stockQuantity)
 
-            let item = ProductStateData.find(x => x.id !== id && x.name.toLocaleLowerCase() === data.name.toLocaleLowerCase())
-            if (item) {
-                setShow(true)
-                setErrorMessage({ ...errorMessage, name: "Product With This Name is Already Exist" })
-                return
+            let fp = parseInt(bp - (bp * d / 100))
+
+            let items = {
+                ...data,
+                maincategory: data.maincategory || MaincategoryStateData[0].name,
+                subcategory: data.subcategory || SubcategoryStateData[0].name,
+                brand: data.brand || BrandStateData[0].name,
+                basePrice: bp,
+                discount: d,
+                finalPrice: fp,
+                stockQuantity: sc,
+                description: description,
+                pic: oldPics.concat(data.pic)
             }
+            // let item = ProductStateData.find(
+            //     x => x.name.toLocaleLowerCase() === data.name.toLocaleLowerCase()
+            // )
+            // if (item) {
 
-            dispatch(updateProduct({ ...data }))
+            //     setShow(true)
+
+            //     setErrorMessage({
+            //         ...errorMessage,
+            //         name: "Product With This Name is Already Exist"
+            //     })
+
+            //     return
+            // }
+
+            dispatch(updateProduct({ ...items }))
 
 
-
+            // form data bheje jab backend se data me file imege ka concept hoga uske liye yaha code hai --
 
             // let formData = new formData()
-            // formData.append("_id", data._id)
+            // formData.append("id", data.id)
             // formData.append("name", data.name)
-            // formData.append("pic", data.pic)
+            // formData.append("maincategory", data.maincategory || MaincategoryStateData[0].id)
+            // formData.append("subcategory", data.subcategory || SubcategoryStateData[0].id)
+            // formData.append("brand", data.brand || BrandStateData[0].id)
+            // formData.append("finalPrice", fp)
+            // formData.append("stock", data.stock)
+            // formData.append("stockQuantity", sc)
+            // formData.append("description", description)
+
+
+            // data.color?.forEach(item => {
+            //     FormData.append("color", item)
+            // })
+
+            // data.size?.forEach(item => {
+            //     FormData.append("size", item)
+            // })
+
+            // data.pic?.forEach(item => {
+            //     FormData.append("pic", item)
+            // })
+
+            // data.oldPics?.forEach(item => {
+            //     FormData.append("oldPics", item)
+            // })
+
+            // FormData.append('status', data.status)
+
+
+            // formData.append("icon", data.icon)
             // formData.append("status", data.status)
-            // dispatch(createProduct(formData))
+            // dispatch(updateProduct(formData))
 
 
             navigate("/admin/product")
 
-
-
-            // let response = await fetch(`${import.meta.env.VITE_APP_BACKEND_SERVER}/Product/${id}`, {
-            //     method: "PUT",
+            // let response = await fetch(`${import.meta.env.VITE_APP_BACKEND_SERVER}/Product`, {
+            //     method: "POST",
             //     headers: {
             //         "content-type": "application/json",
             //     },
@@ -131,89 +253,311 @@ const AdminProductUpdatePage = () => {
             // response = await response.json()
 
             // if (response) {
+
             //     navigate("/admin/Product")
 
             // } else {
+
             //     alert("Interval error")
+
             // }
 
-
         }
-
     }
 
 
     return (
         <>
-            {/* <h1>this is admin upadte page</h1> */}
-            <div className="container-fluid my-3">
-                <div className="row">
-                    <div className="col-md-3">
-                        <AdminSideBar />
-                    </div>
-                    <div className="col-md-9">
-                        <h4 className='bg-primary text-light text-center p-2'>Update Product
 
-                            <Link to="/admin/product"><i className='bi bi-arrow-left text-light float-end' ></i></Link>
+            {/* <h1>this is admin homepage</h1> */}
+
+            <div className="container-fluid my-3">
+
+                <div className="row">
+
+                    <div className="col-md-3">
+
+                        <AdminSideBar />
+
+                    </div>
+
+                    <div className="col-md-9">
+
+                        <h4 className='bg-primary text-light text-center p-2'>
+                            Update Product
+
+                            <Link to="/admin/product">
+                                <i className='bi bi-arrow-left text-light float-end'></i>
+                            </Link>
 
                         </h4>
 
                         <form onSubmit={postData}>
+
                             <div className="row">
+
                                 <div className="col-12 mb-3">
-                                    <label >Name*</label>
-                                    <input type="text" name='name' onChange={getInputData} placeholder='Full Name' className={`form-control ${show && errorMessage.name ? `border-danger` : `border-primary`}`} />
 
-                                    {show && errorMessage.name ? <p className='text-danger text-capitalize'>{errorMessage.name}</p> : null}
+                                    <label>Name*</label>
 
+                                    <input
+                                        type="text"
+                                        name='name'
+                                        onChange={getInputData}
+                                        value={data.name}
+                                        placeholder='Full Name'
+                                        className={`form-control ${show && errorMessage.name ? `border-danger` : `border-primary`}`}
+                                    />
+
+                                    {show && errorMessage.name ?
+                                        <p className='text-danger text-capitalize'>
+                                            {errorMessage.name}
+                                        </p>
+                                        : null}
+
+                                </div>
+
+                                <div className="col-lg-3 col-md-6 mb-3">
+
+                                    <label>Maincategory*</label>
+                                    <select name="maincategory" value={data.maincategory} onChange={getInputData} className='form-select border-primary'>
+                                        {MaincategoryStateData.filter(x => x.status).map((item, index) => {
+                                            return <option key={index}>{item.name}</option>
+                                            // return <option key={index} value={item.id}>{item.name}</option>  // ye real backend jab use krege uske liye hai
+                                        })}
+                                    </select>
+
+                                </div>
+
+                                <div className="col-lg-3 col-md-6 mb-3">
+
+                                    <label>Subcategory*</label>
+                                    <select name="subcategory" value={data.subcategory} onChange={getInputData} className='form-select border-primary'>
+                                        {SubcategoryStateData.filter(x => x.status).map((item, index) => {
+                                            return <option key={index}>{item.name}</option>
+                                            // return <option key={index} value={item.id}>{item.name}</option>  // ye real backend jab use krege uske liye hai
+                                        })}
+                                    </select>
+
+                                </div>
+
+                                <div className="col-lg-3 col-md-6 mb-3">
+
+                                    <label>Brand*</label>
+                                    <select name="brand" value={data.brand} onChange={getInputData} className='form-select border-primary'>
+                                        {SubcategoryStateData.filter(x => x.status).map((item, index) => {
+                                            return <option key={index}>{item.name}</option>
+                                            // return <option key={index} value={item.id}>{item.name}</option>  // ye real backend jab use krege uske liye hai
+                                        })}
+                                    </select>
+
+                                </div>
+
+                                <div className="col-lg-3 col-md-6 mb-3">
+
+                                    <label>Stock*</label>
+                                    <select name="stock" value={data.stock ? "1" : "0"} onChange={getInputData} className='form-select border-primary'>
+                                        <option value="1">In stock</option>
+                                        <option value="0">Out of stock</option>
+                                    </select>
+
+                                </div>
+
+                                <div className="col-md-4 mb-3">
+
+                                    <label>Base Price*</label>
+
+                                    <input
+                                        type="number"
+                                        name='basePrice'
+                                        onChange={getInputData}
+                                        value={data.basePrice}
+                                        placeholder='Base Price'
+                                        className={`form-control ${show && errorMessage.basePrice ? `border-danger` : `border-primary`}`}
+                                    />
+
+                                    {show && errorMessage.basePrice ?
+                                        <p className='text-danger text-capitalize'>
+                                            {errorMessage.basePrice}
+                                        </p>
+                                        : null}
+
+                                </div>
+
+                                <div className="col-md-4 mb-3">
+
+                                    <label>Discount Price*</label>
+
+                                    <input
+                                        type="number"
+                                        name='discount'
+                                        value={data.discount}
+                                        onChange={getInputData}
+                                        placeholder='Discount Price'
+                                        className={`form-control ${show && errorMessage.discount ? `border-danger` : `border-primary`}`}
+                                    />
+
+                                    {show && errorMessage.discount ?
+                                        <p className='text-danger text-capitalize'>
+                                            {errorMessage.discount}
+                                        </p>
+                                        : null}
+
+                                </div>
+
+                                <div className="col-md-4 mb-3">
+
+                                    <label>Stock Quantity*</label>
+
+                                    <input
+                                        type="number"
+                                        name='stockQuantity'
+                                        value={data.number}
+                                        onChange={getInputData}
+                                        placeholder='Stock Quantity'
+                                        className={`form-control ${show && errorMessage.stockQuantity ? `border-danger` : `border-primary`}`}
+                                    />
+
+                                    {show && errorMessage.stockQuantity ?
+                                        <p className='text-danger text-capitalize'>
+                                            {errorMessage.stockQuantity}
+                                        </p>
+                                        : null}
 
                                 </div>
 
                                 <div className="col-12 mb-3">
-                                    <label >Short Description*</label>
-                                    <textarea name='shortDescription' value={data.shortDescription} rows={4} onChange={getInputData} placeholder='Full Name' className={`form-control ${show && errorMessage.shortDescription ? `border-danger` : `border-primary`}`} />
+                                    <label>Colors*</label>
+                                    <div className="row border border-primary mx-1 p-2">
+                                        {
+                                            colors.map((items, index) => {
+                                                return <div className='col-xl-2 col-lg-3 col-sm-4 col-6' key={index}>
+                                                    <input type="checkbox" id={items} onChange={() => getInputCheckbox("color", items)} checked={data.color?.includes(items)} />
+                                                    <label className='ms-2' htmlFor={items}>{items}</label>
+                                                </div>
 
-                                    {show && errorMessage.shortDescription ? <p className='text-danger text-capitalize'>{errorMessage.shortDescription}</p> : null}
-
-
+                                            })
+                                        }
+                                    </div>
                                 </div>
+                                {show && errorMessage.color ?
+                                    <p className='text-danger text-capitalize'>
+                                        {errorMessage.color}
+                                    </p>
+                                    : null}
 
+
+                                <div className="col-12 mb-3">
+                                    <label>Size*</label>
+                                    <div className="row border border-primary mx-1 p-2">
+                                        {
+                                            sizes.map((items, index) => {
+                                                return <div className='col-xl-2 col-lg-3 col-sm-4 col-6' key={index}>
+                                                    <input type="checkbox" id={items} onChange={() => getInputCheckbox("size", items)} checked={data.size?.includes(items)} />
+                                                    <label className='ms-2' htmlFor={items}>{items}</label>
+                                                </div>
+
+                                            })
+                                        }
+                                    </div>
+                                </div>
+                                {show && errorMessage.size ?
+                                    <p className='text-danger text-capitalize'>
+                                        {errorMessage.size}
+                                    </p>
+                                    : null}
+
+                                <div className='col-12 mb-3'>
+                                    <label>Description</label>
+                                    <RichTextEditor
+                                        ref={editorRef}
+                                        className="editor-host border border-primary"
+                                        value={data.description}
+                                        onChange={(nextHtml, editor) => syncDocument(editor.getJSON(), nextHtml)}
+                                        style={{ minHeight: 380 }}
+                                    />
+                                </div>
 
 
                                 <div className="col-md-6 mb-3">
-                                    <label >Icon*</label>
-                                    <input type="text" name='icon' value={data.icon} onChange={getInputData} className={`form-control ${show && errorMessage.icon ? `border-danger` : `border-primary`}`} placeholder='eg <i class="bi bi-list"></i>' />
+                                    <label >Pic</label>
+                                    <input type="file" name='pic' multiple onChange={getInputData} className={`form-control ${show && errorMessage.pic ? `border-danger` : `border-primary`}`} />
 
-                                    {show && errorMessage.icon ? <p className='text-danger text-capitalize'>{errorMessage.icon}</p> : null}
+                                    {show && errorMessage.pic ? errorMessage.pic?.split("|").map((error, index) => {
+                                        return <p className='text-danger text-capitalize' key={index} >{error}</p>
+                                    }) : null}
+
 
 
                                 </div>
+
                                 <div className="col-md-6 mb-3">
-                                    <label >Status*</label>
-                                    <select name="status" value={data.status ? "1" : "0"} onChange={getInputData} className='form-select border-primary'>
+                                    <label >Old Pics (Click on image to remove)</label>
+                                    <div>
+                                        {
+                                            oldPics.map((pic, index) => {
+                                                return <img key={index}
+                                                    onClick={() => {
+                                                        oldPics.splice(index, 1)
+                                                        setOldPics([...oldPics])
+                                                    }}
+                                                    className='m-1'
+                                                    src={`${import.meta.env.VITE_APP_IMAGE_SERVER}${pic}`}
+                                                    alt="old pic"
+                                                    height={70}
+                                                    width={80} />
+
+                                            })
+                                        }
+                                    </div>
+
+
+                                </div>
+
+
+                                <div className="col-md-6 mb-3">
+
+                                    <label>Status</label>
+
+                                    <select
+                                        name="status"
+                                        onChange={getInputData}
+                                        value={data.status ? "1" : "0"}
+                                        className='form-select border-primary'
+                                    >
+
                                         <option value="1">Active</option>
+
                                         <option value="0">Inactive</option>
 
                                     </select>
 
                                 </div>
 
+
                                 <div className="col-12 mb-3">
-                                    <button type="submit" className='btn btn-primary w-100'>Update</button>
+
+                                    <button
+                                        type="submit"
+                                        className='btn btn-primary w-100'
+                                    >
+                                        Update
+                                    </button>
+
                                 </div>
 
-
-
                             </div>
+
                         </form>
 
-
-
                     </div>
+
                 </div>
+
             </div>
+
         </>
     )
 }
 
-export default AdminProductUpdatePage
+export default AdminProductCreatePage

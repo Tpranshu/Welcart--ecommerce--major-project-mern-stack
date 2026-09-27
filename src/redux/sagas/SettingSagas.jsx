@@ -15,13 +15,21 @@ function* getSaga() {
 }
 
 
+// function* upadteSaga(action) {
+//     yield updateRecordAPI("setting")
+//     yield put({ type: UPDATE_SETTING_RED, payload: action.payload })
+
+//     // let response = yield updateMultipartRecordAPI("setting", action.payload)
+//     // yield put({ type: UPDATE_SETTING_RED, payload: response })
+
+
+// }
+
 function* upadteSaga(action) {
-    yield updateRecordAPI("setting")
-    yield put({ type: UPDATE_SETTING_RED, payload: action.payload })
 
-    // let response = yield updateMultipartRecordAPI("setting", action.payload)
-    // yield put({ type: UPDATE_SETTING_RED, payload: response })
+    let response = yield updateRecordAPI("setting", action.payload)
 
+    yield put({ type: UPDATE_SETTING_RED, payload: response })
 
 }
 

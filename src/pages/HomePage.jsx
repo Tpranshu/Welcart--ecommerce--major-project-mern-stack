@@ -5,6 +5,7 @@ import Banner from '../components/Banner'
 import ProductSlider from '../components/ProductSlider'
 import Products from '../components/Products'
 import Testimonial from '../components/Testimonial'
+import { Link } from 'react-router-dom'
 
 const HomePage = () => {
     return (
@@ -17,39 +18,39 @@ const HomePage = () => {
                     <div className="carousel-indicators">
                         <button type="button" data-bs-target="#header-carousel" data-bs-slide-to="0" className="active"
                             aria-current="true" aria-label="Slide 1">
-                            <img className="img-fluid" src="img/carousel-1.jpg" alt="Image"/>
+                            <img className="img-fluid" src="../../public/img/banner1.jpg" style={{height: 600}} alt="Image" />
                         </button>
                         <button type="button" data-bs-target="#header-carousel" data-bs-slide-to="1" aria-label="Slide 2">
-                            <img className="img-fluid" src="img/carousel-2.jpg" alt="Image"/>
+                            <img className="img-fluid" src="../../public/img/banner4.jpg" style={{height: 600}} alt="Image" />
                         </button>
                         <button type="button" data-bs-target="#header-carousel" data-bs-slide-to="2" aria-label="Slide 3">
-                            <img className="img-fluid" src="img/carousel-3.jpg" alt="Image"/>
+                            <img className="img-fluid" src="../../public/img/banner5.jpg" style={{height: 600}} alt="Image" />
                         </button>
                     </div>
                     <div className="carousel-inner">
                         <div className="carousel-item active">
-                            <img className="w-100" src="img/carousel-1.jpg" alt="Image"/>
-                                <div className="carousel-caption">
-                                    <h1 className="display-1 text-uppercase text-white mb-4 animated zoomIn">Best Metalcraft Solutions
-                                    </h1>
-                                    <a href="#" className="btn btn-primary py-3 px-4">Explore More</a>
-                                </div>
+                            <img className="w-100" src="../../public/img/banner1.jpg" style={{height: 600}} alt="Image" />
+                            <div className="carousel-caption">
+                                <h1 className="display-1 text-uppercase text-white mb-4 animated zoomIn">Quality Products, Better Everyday Living
+                                </h1>
+                                <Link to="/shop/?mc=Male" className="btn btn-primary py-3 px-4">Explore More</Link>
+                            </div>
                         </div>
                         <div className="carousel-item">
-                            <img className="w-100" src="img/carousel-2.jpg" alt="Image"/>
-                                <div className="carousel-caption">
-                                    <h1 className="display-1 text-uppercase text-white mb-4 animated zoomIn">Best Metalcraft Solutions
-                                    </h1>
-                                    <a href="#" className="btn btn-primary py-3 px-4">Explore More</a>
-                                </div>
+                            <img className="w-100" src="../../public/img/banner4.jpg" style={{height: 600}} alt="Image" />
+                            <div className="carousel-caption">
+                                <h1 className="display-1 text-uppercase text-white mb-4 animated zoomIn">Discover More, Shop With Confidence
+                                </h1>
+                                <Link to="/shop/?mc=Female" className="btn btn-primary py-3 px-4">Explore More</Link>
+                            </div>
                         </div>
                         <div className="carousel-item">
-                            <img className="w-100" src="img/carousel-3.jpg" alt="Image"/>
-                                <div className="carousel-caption">
-                                    <h1 className="display-1 text-uppercase text-white mb-4 animated zoomIn">Best Metalcraft Solutions
-                                    </h1>
-                                    <a href="#" className="btn btn-primary py-3 px-4">Explore More</a>
-                                </div>
+                            <img className="w-100" src="../../public/img/banner5.jpg" style={{height: 600}} alt="Image" />
+                            <div className="carousel-caption">
+                                <h1 className="display-1 text-uppercase text-white mb-4 animated zoomIn">Everything You Need, All Together
+                                </h1>
+                                <Link to="/shop/?mc=Kids" className="btn btn-primary py-3 px-4">Explore More</Link>
+                            </div>
                         </div>
                     </div>
                 </div>
