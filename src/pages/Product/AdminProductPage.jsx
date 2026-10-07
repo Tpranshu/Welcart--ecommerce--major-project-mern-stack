@@ -208,9 +208,27 @@ const AdminProductPage = () => {
                         <div style={{ width: 430 }}>
                           {
                             item.pic?.map((pic, index) => {
-                              return <a key={index} href={`${import.meta.env.VITE_APP_IMAGE_SERVER}${pic}`} target='_blank'>
-                                <img src={`${import.meta.env.VITE_APP_IMAGE_SERVER}${pic}`} height={70} width={80} className='m-1' alt="Category Image" />
-                              </a>
+                              // return <a key={index} href={`${import.meta.env.VITE_APP_IMAGE_SERVER}${pic}`} target='_blank'>
+                              //   <img src={`${import.meta.env.VITE_APP_IMAGE_SERVER}${pic}`} height={70} width={80} className='m-1' alt="Category Image" />
+                              // </a>
+
+                              return item.pic?.map((pic, index) => {
+                                // let imageUrl = `${import.meta.env.VITE_APP_IMAGE_SERVER}/${pic}`
+                                let imageUrl = `${import.meta.env.VITE_APP_IMAGE_SERVER.replace(/\/+$/, "")}/${pic.replace(/^\/+/, "")}`
+
+                                console.log("Image URL:", imageUrl)
+
+                                return (
+                                  <img
+                                    key={index}
+                                    src={imageUrl}
+                                    height={70}
+                                    width={80}
+                                    alt="Product"
+                                  />
+                                )
+                              })
+
 
                             })
                           }

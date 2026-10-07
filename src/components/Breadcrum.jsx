@@ -4,8 +4,6 @@ import { Link } from 'react-router-dom'
 const Breadcrum = ({title}) => {  // title props
     return (
         <>
-            <h1>this is Breadcrum component</h1>
-
             {/* <!-- Page Header Start --> */}
             <div className="container-fluid page-header pt-5 mb-6 wow fadeIn" data-wow-delay="0.1s">
                 <div className="container text-center pt-5">

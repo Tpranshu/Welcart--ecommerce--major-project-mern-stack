@@ -36,7 +36,7 @@ const Testimonial = () => {
             <div className="container-fluid pt-6 pb-6">
                 <div className="container">
                     <div className="text-center mx-auto wow fadeInUp" data-wow-delay="0.1s" style={{ maxWidth: "600px" }}>
-                        <h1 className="display-6 text-uppercase mb-5">What They’re Talking About Our Welding Work</h1>
+                        <h1 className="display-6 text-uppercase mb-5">What They are Talking About Our Welding Work</h1>
                     </div>
                     <div className="row g-5 align-items-center">
                         <div className="col-lg-5 wow fadeInUp" data-wow-delay="0.3s">

@@ -41,6 +41,9 @@ import AdminProductPage from './pages/Product/AdminProductPage'
 import AdminProductCreatePage from './pages/Product/AdminProductCreatePage'
 import AdminProductUpdatePage from './pages/Product/AdminProductUpdatePage'
 
+import SignupPage from './pages/user/SignupPage'
+import LoginPage from './pages/user/loginPage'
+
 const App = () => {
   return (
     <BrowserRouter>
@@ -56,6 +59,8 @@ const App = () => {
         <Route path='/faq' element={<Faq />} />
         <Route path='/testimonial' element={<TestimonialPage />} />
         <Route path='/contactus' element={<ContactUsPage />} />
+        <Route path='/signup' element={<SignupPage />} />
+        <Route path='/login' element={<LoginPage />} />
 
 
         {/* admin routes */}
