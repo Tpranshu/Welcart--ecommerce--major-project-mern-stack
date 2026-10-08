@@ -17,6 +17,7 @@ const LoginPage = () => {
         setErrorMessage("")
 
     }
+    let navigate = useNavigate()
 
     async function postData(e) {
         e.preventDefault()
@@ -32,8 +33,22 @@ const LoginPage = () => {
 
         let item = response.find(x => x.username?.toLocaleLowerCase() === data.username?.toLocaleLowerCase() || x.email?.toLocaleLowerCase() === data.username?.toLocaleLowerCase() && x.password === data.password)
         if (item) {
+            if(item.status === false){
+                setErrorMessage("Your account is blocked due to some unauthorized activity, please contact us to resume your account")
+
+            }else{
+                localStorage.setItem("login", true)
+                localStorage.setItem("name", item.name)
+                localStorage.setItem("userid", item.id)
+                localStorage.setItem("role", item.role)
+                if(item.role === "Buyer"){
+                    navigate("/profile")
 
 
+                }else{
+                    navigate("/admin")
+                }
+            }
 
 
         } else {
@@ -57,7 +72,7 @@ const LoginPage = () => {
 
                             <div className="md-3">
                                 <label >Username*</label>
-                                <input type="text" name='username' onChange={getInputData} className={`form-control ${errorMessage ? `border-danger` : `border-primary`}`} placeholder='Enter Username' />
+                                <input type="text" name='username' onChange={getInputData} className={`form-control ${errorMessage ? `border-danger` : `border-primary`}`} placeholder='Enter Username or Email Address' />
                                 {errorMessage ? <p className='text-danger text-capitalize'>{errorMessage}</p> : null}
 
 
@@ -83,9 +98,9 @@ const LoginPage = () => {
 
                         </form>
 
-                        <div className="mb-3">
+                        <div className="mb-3 d-flex justify-center-between">
                             <Link to="#">Forget Password</Link>
-                            <Link to="/login">Doesn't Have an Account? signup</Link>
+                            <Link to="/signup">Doesn't Have an Account? signup</Link>
                         </div>
                         {/* hello */}
 

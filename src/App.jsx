@@ -43,6 +43,7 @@ import AdminProductUpdatePage from './pages/Product/AdminProductUpdatePage'
 
 import SignupPage from './pages/user/SignupPage'
 import LoginPage from './pages/user/loginPage'
+import ProfilePage from './pages/user/ProfilePage'
 
 const App = () => {
   return (
@@ -61,6 +62,8 @@ const App = () => {
         <Route path='/contactus' element={<ContactUsPage />} />
         <Route path='/signup' element={<SignupPage />} />
         <Route path='/login' element={<LoginPage />} />
+
+        <Route path='/profile' element={<ProfilePage />} />
 
 
         {/* admin routes */}
