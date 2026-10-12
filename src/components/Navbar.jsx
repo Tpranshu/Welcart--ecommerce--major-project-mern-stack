@@ -186,7 +186,7 @@ const Navbar = () => {
 
                                                 <Link to="/profile?option=Profile" className="dropdown-item">Profile</Link>
                                                 <Link to="/profile?option=Orders" className="dropdown-item">Orders</Link>
-                                                <Link to="/profile?option=Wishlist" className="dropdown-item">Wishlist</Link>
+                                                <Link to="/profile?option=Whislist" className="dropdown-item">Wishlist</Link>
                                                 <Link to="/profile?option=Address" className="dropdown-item">Address</Link>
                                                 <Link to="/cart" className="dropdown-item">Cart</Link>
                                                 <Link to="/checkout" className="dropdown-item">Checkout</Link>

@@ -36,10 +36,10 @@ const ProfilePage = () => {
                     <div className="col-md-9">
                         <h5 className='bg-primary text-light text-center p-2'>{option}</h5>
                         {option === "Profile" ? <Profile /> : null}
-                        {option === "Profile" ? <UpdateProfile /> : null}
-                        {option === "Profile" ? <Whislist /> : null}
-                        {option === "Profile" ? <Orders /> : null}
-                        {option === "Profile" ? <Address /> : null}
+                        {option === "Update Profile" ? <UpdateProfile setSearchParams={setSearchParams} /> : null}
+                        {option === "Whislist" ? <Whislist /> : null}
+                        {option === "Orders" ? <Orders /> : null}
+                        {option === "Address" ? <Address /> : null}
 
                     </div>
 

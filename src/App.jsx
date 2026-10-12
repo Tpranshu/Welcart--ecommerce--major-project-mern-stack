@@ -44,6 +44,8 @@ import AdminProductUpdatePage from './pages/Product/AdminProductUpdatePage'
 import SignupPage from './pages/user/SignupPage'
 import LoginPage from './pages/user/loginPage'
 import ProfilePage from './pages/user/ProfilePage'
+import CartPage from './components/User/CartPage'
+import CheckoutPage from './components/User/CheckoutPage'
 
 const App = () => {
   return (
@@ -64,6 +66,8 @@ const App = () => {
         <Route path='/login' element={<LoginPage />} />
 
         <Route path='/profile' element={<ProfilePage />} />
+        <Route path='/cart' element={<CartPage />} />
+        <Route path='/checkout' element={<CheckoutPage />} />
 
 
         {/* admin routes */}
@@ -103,6 +107,8 @@ const App = () => {
       <Footer />
 
     </BrowserRouter>
+
+    
   )
 }
 

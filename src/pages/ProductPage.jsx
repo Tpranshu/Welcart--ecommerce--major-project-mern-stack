@@ -3,7 +3,10 @@ import Breadcrum from '../components/Breadcrum'
 import { useDispatch, useSelector } from 'react-redux'
 // import './ProductPage.css'
 import { getProduct } from "../redux/ActionCreators/ProductActionCreators"
-import { useParams } from 'react-router-dom'
+import { getCart, createCart } from "../redux/ActionCreators/CartActionCreators"
+import { getWhislist, createWhislist } from "../redux/ActionCreators/WhislistActionCreators"
+
+import { useNavigate, useParams } from 'react-router-dom'
 import ProductSlider from '../components/ProductSlider'
 
 // Import Swiper react components
@@ -51,7 +54,7 @@ const sliderOptions = {
 // }
 
 const ProductPage = () => {
-  
+
   let { id } = useParams()
   let [data, setData] = useState({})
   let [relatedProducts, setRelatedProducts] = useState([])
@@ -63,7 +66,67 @@ const ProductPage = () => {
   })
 
   let ProductStateData = useSelector(state => state.ProductStateData)
+  let CartStateData = useSelector(state => state.CartStateData)
+  let WhislistStateData = useSelector(state => state.WhislistStateData)
+
   let dispatch = useDispatch()
+  let navigate = useNavigate()
+
+  function addToCart() {
+    let cart = CartStateData.find(x => x.user === localStorage.getItem("userid") && x.product === id)
+    if (!cart) {
+
+      let item = {
+
+        user: localStorage.getItem("userid"),
+        product: data.id,
+
+        ...selected,
+        total: selected.quantity * data.finalPrice,
+
+        // remove following items in case of real backend
+        name: data.name,
+        brand: data.brand,
+        finalPrice: data.finalPrice,
+        stockQuantity: data.stockQuantity,
+        pic: data.pic[0]
+
+
+      }
+      dispatch(createCart(item))
+      
+    }
+    navigate("/cart")
+    
+  }
+
+  
+  function addToWhislist() {
+    let whislist = WhislistStateData.find(x => x.user === localStorage.getItem("userid") && x.product === id)
+    if (!whislist) {
+
+      let item = {
+
+        user: localStorage.getItem("userid"),
+        product: data.id,
+
+        // remove following items in case of real backend
+        name: data.name,
+        brand: data.brand,
+        color: data.color,
+        size: data.size,
+        finalPrice: data.finalPrice,
+        stockQuantity: data.stockQuantity,
+        pic: data.pic[0]
+
+
+      }
+      dispatch(createWhislist(item))
+      
+    }
+    navigate("/profile?option=Whislist")
+    
+  }
 
   useEffect(() => {
     (() => {
@@ -82,6 +145,21 @@ const ProductPage = () => {
       }
     })()
   }, [ProductStateData.length, id])
+
+  useEffect(() => {
+    (() => {
+      dispatch(getWhislist())
+    })()
+
+  }, [WhislistStateData.length])
+
+
+  useEffect(() => {
+    (() => {
+      dispatch(getCart())
+    })()
+
+  }, [CartStateData.length])
 
   return (
     <>
@@ -175,8 +253,8 @@ const ProductPage = () => {
                         }
                         <div className="col-md-8">
                           <div className="btn-group w-100">
-                            {data.stock ? <button className='btn btn-primary'><i className='bi bi-cart-check'>Add to Cart</i></button> : null}
-                            <button className='btn btn-secondary text-light'><i className='bi bi-heart-fill'>Add to Whislist</i></button>
+                            {data.stock ? <button className='btn btn-primary' onClick={addToCart}><i className='bi bi-cart-check'>Add to Cart</i></button> : null}
+                            <button className='btn btn-secondary text-light' onClick={addToWhislist}><i className='bi bi-heart-fill'>Add to Whislist</i></button>
                           </div>
                         </div>
                       </div>

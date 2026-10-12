@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 
 const Profile = () => {
+  
   let [data, setData] = useState({})
 
   useEffect(() => {
